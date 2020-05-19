@@ -6,7 +6,7 @@
       dark
     >
       <v-spacer></v-spacer>
-      <v-btn>
+      <v-btn @click="cerrarSesion">
         <span class="mr-2">Cerrar Sesion</span>
       </v-btn>
     </v-app-bar>
@@ -18,6 +18,7 @@
 </template>
 
 <script>
+import {mapActions} from "vuex";
 
 export default {
   name: 'App',
@@ -28,5 +29,8 @@ export default {
   data: () => ({
     //
   }),
+  methods:{
+    ...mapActions(['cerrarSesion'])
+  }
 };
 </script>

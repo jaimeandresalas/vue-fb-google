@@ -1,6 +1,7 @@
 <template>
-  <div class="home">
-  </div>
+  <v-container>
+    <h1>Ruta Protegida</h1>
+  </v-container>
 </template>
 
 <script>

@@ -13,7 +13,7 @@
               <v-icon left dark >mdi-thumb-up</v-icon>
               Google
             </v-btn>
-            <v-btn block color="blue" dark rounded>
+            <v-btn block color="blue" dark rounded @click="facebook">
               <v-icon left dark >mdi-star</v-icon>
               Facebook
             </v-btn>
@@ -32,7 +32,8 @@
 
 <script lang="ts">
 
-  import {firebase, auth, db} from "@/firebase"
+  import {firebase, auth, db} from "../firebase"
+  import {mapMutations} from "vuex"
   import Vue from 'vue'
 
   export default Vue.extend({
@@ -42,35 +43,38 @@
       }
     },
     methods:{
-      async google(){
+      ...mapMutations(['newUsuario']),
+      google(){
         console.log('Google')
         const provider = new firebase.auth.GoogleAuthProvider();
-        firebase.auth().languageCode = 'es';
+        this.ingresar(provider);
         
-        try {
+      },
+      facebook(){
+        const provider = new firebase.auth.FacebookAuthProvider();
+        this.ingresar(provider);
+        
+    },
+    async ingresar(provider){
+      firebase.auth().languageCode = 'es';
+      try {
           const result = await firebase.auth().signInWithPopup(provider);
-          const user =  result.user;
-          console.log(user);
-
-          //Construir objeto para guardar en base de datos.
-          const usuario = {
+          const user= result.user;
+          //Guardar en base de datos
+          const usuario= {
             user: user.displayName,
             email: user.email,
             uid: user.uid,
             foto: user.photoURL
           }
-          //Guardar en firestore
-          await db.collection('usuarios').doc(usuario.uid).set(
-            usuario
-          )
-          console.log('Usuario guardado en DB');
+
+          this.newUsuario(usuario)
+          //Guardar en firebase
+          await db.collection('usuarios').doc(usuario.uid).set(usuario)
+          console.log('Usuario guardado desde fb')
         } catch (error) {
-          console.log(error);
+          console.log(error)
         }
-
-
-        
-
       }
     }
   })
